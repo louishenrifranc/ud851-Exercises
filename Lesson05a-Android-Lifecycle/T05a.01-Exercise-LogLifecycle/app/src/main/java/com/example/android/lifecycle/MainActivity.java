@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Called when the activity is first created. This is where you should do all of your normal
      * static set up: create views, bind data to lists, etc.
-     *
+     * <p>
      * Always followed by onStart().
      *
      * @param savedInstanceState The Activity's previously frozen state, if there was one.
@@ -46,11 +46,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mLifecycleDisplay = (TextView) findViewById(R.id.tv_lifecycle_events_display);
-
+        logAndAppend(ON_CREATE);
         // TODO (1) Use logAndAppend within onCreate
     }
 
     // TODO (2) Override onStart, call super.onStart, and call logAndAppend with ON_START
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
 
     // TODO (3) Override onResume, call super.onResume, and call logAndAppend with ON_RESUME
 
@@ -61,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     // TODO (6) Override onRestart, call super.onRestart, and call logAndAppend with ON_RESTART
 
     // TODO (7) Override onDestroy, call super.onDestroy, and call logAndAppend with ON_DESTROY
+
     /**
      * The final call you receive before your activity is destroyed. This can happen either because
      * the activity is finishing (someone called finish() on it, or because the system is

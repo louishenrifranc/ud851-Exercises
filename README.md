@@ -76,16 +76,73 @@ Toast.makeText(NameOfTheClass.context, message, TOAST.LENGTH_LONG).show()
 * 7. Modify data to display by creating a set in the Adaptater class, and call notifyDatSetChanged() in it.
 
 # Intents
-* Start an Activity from another Activity. It is done by passing messages called Intents.
+### Definition
+* Start an Activity from another Activity (in another app or not). It is done by passing messages called Intents.
+### Create an Intent
 * To pass to another Activity, you have to create a new intent:
 ```java
 Intent intent = new Intent(contextFirstActivity, contextNewActivity)
 # A context object is a reference to the activity class (this or .class)
 ```
-* To also pass data, use the method ```i.putExtra("NAME_FOR_RETRIEVAL", dataVariable)```
+### Pass and receive data
+* To also pass data, use the method ```i.putExtra("CODE_FOR_RETRIEVAL", dataVariable)```
 
 * To receive the data in the new Activity:
 ```java
 Bundle extras = getIntent().getExtras();
-data = (Type) extras.get("NAME_FOR_RETRIEVAL");
+data = (Type) extras.get("CODE_FOR_RETRIEVAL");
 ```
+### Activity for Result
+You can launch new activity only to get back result
+```java
+startActivityForResult(
+	new Intent(),
+	"CODE_FOR_RETRIEVAL");
+# and get back the data
+onActivityResult("CODE_FOR_RETRIEVAL", intResultCode, intent);
+```
+
+### Common intent 
+* A common intent does not specify the app component to start, but instead specifies an action. Here is the example of how to start a browser. To check if an any app can resolve the activity, for example launch a browser, you can call the method ```intent.resolveActivity(getPacketManager())```. 
+* When creating a new Activity it is possible to order them in the AndroidManifest.xml, so that a default Return button to go back from the previous Activity can be set. Here is the definition of a Child Activity:
+```xml
+<activity
+            android:name=".DetailActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+</activity>
+```
+
+# Life cycle
+### Logging message to the terminal
+* To log something, you can use the method
+```java
+# TAG can be Activity.class.getSimpleName()
+Log.d(TAG, "string to print");
+```
+
+### Lifecycle callback
+![Activity Lifecyle](https://developer.android.com/guide/components/images/activity_lifecycle.png)
+
+When the app started, stoped, or is even put in background, some functions fire and you can override them:
+* onCreate() : always implement this callback. It is called when the system create this Activity
+* onStart()
+
+### Save Activity state
+Activity state can be destroyed for multiple reasons (pressing back button, calling finish()). If an Activity is destroyed and recreated, all the layout/view are saved using the Bundle instante (Bundle is a mapping from String keys to various Parcelable values, Parcelable is an interface to write and read back class). But menbers variable of the Activity are destroyed so there is a way to saved them:
+```java
+
+public void onSaveInstanceState(Bundle savedInstanceState) {
+	super.onSaveInstanceState(savedInstanceState);
+	savedInstanceState.putInt("CODE_FOR_RETRIEVAL", variableToSave);
+}
+```
+
+Each variable can be restore in the ```onCreate()``` method using the Bundle.
+
+### Use AsyncTaskLoader instead of AsyncTask
+It makes AsyncTask non dependant of the Activity life. Because it becomes a Loader, it will lives even if the Activity is destroyed.
+
+
