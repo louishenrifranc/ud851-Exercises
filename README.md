@@ -1,4 +1,4 @@
-# Toy App Exercise Repo
+# ANDROID PROGRAMMING UDACITY COURSE
 
 # Part 2
 ### 2.1: Create a layout
@@ -82,7 +82,7 @@ Toast.makeText(NameOfTheClass.context, message, TOAST.LENGTH_LONG).show()
 * To pass to another Activity, you have to create a new intent:
 ```java
 Intent intent = new Intent(contextFirstActivity, contextNewActivity)
-# A context object is a reference to the activity class (this or .class)
+// A context object is a reference to the activity class (this or .class)
 ```
 ### Pass and receive data
 * To also pass data, use the method ```i.putExtra("CODE_FOR_RETRIEVAL", dataVariable)```
@@ -98,7 +98,7 @@ You can launch new activity only to get back result
 startActivityForResult(
 	new Intent(),
 	"CODE_FOR_RETRIEVAL");
-# and get back the data
+// and get back the data
 onActivityResult("CODE_FOR_RETRIEVAL", intResultCode, intent);
 ```
 
@@ -119,7 +119,7 @@ onActivityResult("CODE_FOR_RETRIEVAL", intResultCode, intent);
 ### Logging message to the terminal
 * To log something, you can use the method
 ```java
-# TAG can be Activity.class.getSimpleName()
+// TAG can be Activity.class.getSimpleName()
 Log.d(TAG, "string to print");
 ```
 
@@ -143,6 +143,19 @@ public void onSaveInstanceState(Bundle savedInstanceState) {
 Each variable can be restore in the ```onCreate()``` method using the Bundle.
 
 ### Use AsyncTaskLoader instead of AsyncTask
-It makes AsyncTask non dependant of the Activity life. Because it becomes a Loader, it will lives even if the Activity is destroyed.
-
+It makes AsyncTask non dependant of the Activity life. Because it becomes a Loader, it will lives even if the Activity is destroyed. For example if you launch a network research, and the orientation of the screen is changed, then the thread handler is reset but the thread keep running.
+Here is how you should implement a ```AsyncTaskLoader```:
+* Make your activity inherit from ```LoaderCallbacks<TypeVariableToReturn>```
+* Instantiate the ```AsyncTaskLoader``` in the ```onCreate```:
+	```java
+    // A loader ID
+    int loaderId = LOADER_ID;
+    // A callback 
+    LoaderCallbacks<TypeVariableToReturn> callback = Activity.this;
+    // Init the Loader: If the loader doesn't already exist, one is created, and the last one is re-used
+    getSupportLoaderManager().initLoader(loaderId, bundleReferenceIfNecessary, callback);
+	```
+* Override function ```onCreateLoader(id, bundle)```:
+	```java
+	```
 
