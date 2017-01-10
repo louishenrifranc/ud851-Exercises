@@ -4,11 +4,9 @@
 ### 2.1: Create a layout
 * Create a LinearLayout and add object.
 * Get the object with the ```findViewbyId(R.id.name_defined_xml)```
-### 2.2: Add a Menu
-* Create a Menu in the xml file.
-* Add it to the action bar.
-* Save a string in the res/values/strings.xml and affect it to an element in the xml file via @string/name_of_the_string_.
-* Overload onCreateOptionsMenu in .java file. It will modify the Menu (Action Bar)
+### 2.2: Add a Menu (a button in the ActionBar)
+* Create a menu folder and a xml file in that folder which will represent the Menu item
+* Override ```onCreateOptionsMenu``` in the main Activity file. It will modify the ActionBar by adding the new button just created
 ```java
 public boolean onCreateOptionsMenu(Menu menu) {
  MenuInflater inflater = getMenuInflater();
@@ -20,7 +18,9 @@ public boolean onCreateOptionsMenu(Menu menu) {
 ```java
 public boolean onOptionsItemSelected(MenuItem item){
 	int id = item.getItemId();
-	if(id = R.id.action_refresh){}...
+	if(id = R.id.action_refresh){
+# Create a new intent to open up the Settings Activity
+}...
 }
 ```
 * Create a Toast with the lines:
@@ -83,6 +83,7 @@ Toast.makeText(NameOfTheClass.context, message, TOAST.LENGTH_LONG).show()
 ```java
 Intent intent = new Intent(contextFirstActivity, contextNewActivity)
 // A context object is a reference to the activity class (this or .class)
+startActivity(intent);
 ```
 ### Pass and receive data
 * To also pass data, use the method ```i.putExtra("CODE_FOR_RETRIEVAL", dataVariable)```
@@ -144,18 +145,44 @@ Each variable can be restore in the ```onCreate()``` method using the Bundle.
 
 ### Use AsyncTaskLoader instead of AsyncTask
 It makes AsyncTask non dependant of the Activity life. Because it becomes a Loader, it will lives even if the Activity is destroyed. For example if you launch a network research, and the orientation of the screen is changed, then the thread handler is reset but the thread keep running.
-Here is how you should implement a ```AsyncTaskLoader```:
-* Make your activity inherit from ```LoaderCallbacks<TypeVariableToReturn>```
-* Instantiate the ```AsyncTaskLoader``` in the ```onCreate```:
-	```java
-    // A loader ID
-    int loaderId = LOADER_ID;
-    // A callback 
-    LoaderCallbacks<TypeVariableToReturn> callback = Activity.this;
-    // Init the Loader: If the loader doesn't already exist, one is created, and the last one is re-used
-    getSupportLoaderManager().initLoader(loaderId, bundleReferenceIfNecessary, callback);
-	```
-* Override function ```onCreateLoader(id, bundle)```:
-	```java
-	```
+One particular subclass of Loaders is of interest: the AsyncTaskLoader. This class performs the same function as the AsyncTask, but a bit better. It can handle Activity configuration changes more easily, and it behaves within the life cycles of Fragments and Activities. The nice thing is that the AsyncTaskLoader can be used in any situation that the AsyncTask is being used
+
+# Preferences
+### Data Persistence
+* Bundle to save key-value pairs. Data is gone if app is shutdown, it is a temporary saved place
+* SharedPreference: save key-value pairs in a File. Save forever until the app is uninstall or phone is crashed.	It is used to save small information about the user/app state such as string/numerical values.
+* SQLite
+* Internal/External storage: save into the memory card/hard drive music...
+* Save in the cloud (Google Firebase)
+
+### Create a Settings Activity and add it a PreferenceFragment
+* A PreferenceFragment is an object to display properly an object representing a settings parameter.
+* Create a Menu item (saw before)
+* Create a new class in the java folder called SettingsFragment inherited from ```PreferenceFragmentCompat```.
+* Create an _xml_ folder, and a xml file in it. It create by default a PreferenceScreen in the xml. Here is an example:
+```xml
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="Name of the parameter"
+        android:summaryOff="What to display when value is False"
+        android:summaryOn="What to .. when value is True"
+        android:title="Name to display"
+        ></CheckBoxPreference>
+</PreferenceScreen>
+```
+* Back in the SettingsFragment file, use the method ```addPreferencesFromRessource(R.xml.id_xml_file);
+* Modify the settings activity if not done to display the new PreferenceScreen.
+```xml
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_settings"
+    android:name="android.example.com.visualizerpreferences.AudioVisuals.SettingsFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+```
+* Because we used the PreferenceFragmentCompat library, we need to add to the style xml:
+```<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>```.
+
+
+
 

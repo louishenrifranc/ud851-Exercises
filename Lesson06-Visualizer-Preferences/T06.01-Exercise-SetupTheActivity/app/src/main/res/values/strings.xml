@@ -2,7 +2,7 @@
     <string name="app_name">Visualize</string>
 
     <!-- TODO (4) Add string for Settings -->
-    
+    <string name="menu_name" translatable="true">Settings</string>
     <!-- - - - - - - - - - - - - - - -
           - Used by Preferences  -
           - - - - - - - - - - - - - - - -->
