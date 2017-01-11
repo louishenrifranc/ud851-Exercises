@@ -45,6 +45,7 @@ public class VisualizerActivity extends AppCompatActivity {
         defaultSetup();
         setupPermissions();
     }
+    
 
     private void defaultSetup() {
         mVisualizerView.setShowBass(true);

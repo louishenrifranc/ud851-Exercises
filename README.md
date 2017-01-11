@@ -6,7 +6,7 @@
 * Get the object with the ```findViewbyId(R.id.name_defined_xml)```
 ### 2.2: Add a Menu (a button in the ActionBar)
 * Create a menu folder and a xml file in that folder which will represent the Menu item
-* Override ```onCreateOptionsMenu``` in the main Activity file. It will modify the ActionBar by adding the new button just created
+* Override ```onCreateOptionsMenu``` in the main Activity file. It will modify the ActionBar by adding the new button just created (create the Menu)
 ```java
 public boolean onCreateOptionsMenu(Menu menu) {
  MenuInflater inflater = getMenuInflater();
@@ -116,6 +116,19 @@ onActivityResult("CODE_FOR_RETRIEVAL", intResultCode, intent);
 </activity>
 ```
 
+and the parent activity
+```xml
+<activity
+	android:name=".MainActivity"
+        android:label="@string/app_name"
+        android:launchMode="singleTop">
+        <intent-filter>
+           <action android:name="android.intent.action.MAIN"/>
+           <category android:name="android.intent.category.LAUNCHER"/>
+        </intent-filter>
+</activity>
+```
+```launchMode``` tells whether the MainActivity should be recreated when getting back to the MainActivity or only restore.
 # Life cycle
 ### Logging message to the terminal
 * To log something, you can use the method
@@ -156,10 +169,10 @@ One particular subclass of Loaders is of interest: the AsyncTaskLoader. This cla
 * Save in the cloud (Google Firebase)
 
 ### Create a Settings Activity and add it a PreferenceFragment
-* A PreferenceFragment is an object to display properly an object representing a settings parameter.
-* Create a Menu item (saw before)
+* A PreferenceFragment is an object to display properly a settings parameter.
+* Create a Menu item (saw before).
 * Create a new class in the java folder called SettingsFragment inherited from ```PreferenceFragmentCompat```.
-* Create an _xml_ folder, and a xml file in it. It create by default a PreferenceScreen in the xml. Here is an example:
+* Create an _xml_ folder, and an xml file in it. It creates by default a PreferenceScreen in the xml. You can add CheckBoxPreference, ListPreference... Here is an example:
 ```xml
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
@@ -182,7 +195,59 @@ One particular subclass of Loaders is of interest: the AsyncTaskLoader. This cla
 ```
 * Because we used the PreferenceFragmentCompat library, we need to add to the style xml:
 ```<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>```.
+### Access the parameter value from the main activity
+#### Easy way
+In a method called by onCreate(), add the following code:
+```java
+SharedPreferences sharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
+# to get an object use the method get + type of the object
+# Note that getString is used to access a string key from the string file
+variable = sharedPreferences.getBoolean(getString(R.string.pref_parameter_key), getString(R.string.pref_parameter_value));
+// pref_parameter_value are the default values
+```
+The problem with this method is to call the method in the onCreate method, that is only called when the app launches, rotates...
+#### A better way
+1. Make the the MainActivity implementing ```SharedPreferences.OnSharedPreferenceChangeListener```, override onSharedPreferenceChanged, with something like the code below:
+```java
+public void onSharedPrefernceChanged(SharedPreferences sharedPreferences, String key){
+	if(key.equals(getString(R.string.pref_parameter_key)){
+	// Then as up, 
+	}
+}
+```
+2. Register the listener by calling ```sharedPreferences.registerOnSharedPrefernceChangerListener(this)``` in the onCreate method.
+3. Unregister the method by overriding the ```onDestroy``` method:
+```PreferenceManager.getDefaultSharedPreferences(this).unregisterONSharedPreferenceChangeListener(this)```.
 
+### Other Preferences
+* ListPreference
+An example:
+```xml
 
+```
+* TextPreference
+An example:
+```xml
+    <EditTextPreference
+        android:defaultValue="Mountain View, CA 94843"
+        android:inputType="text"
+        android:key="location"
+        android:singleLine="true"
+        android:title="Location"
+        >
+    </EditTextPreference>
+```
+For TextPreference, the user can enter everything. Hence one should restrict and control what the user has inputed and act consequently.
+To do so, you'll have to make the SettingsActivity inherited from ```Preference.OnPreferenceChangeListener```. Instead of ```OnSharedPreferenceChangeListener```, it is triggered BEFORE any avlue is saved in the SharedPreference file. The method to override is ```onPreferenceChange```. The listener should be attach to the  preference in onCreatePreferences:
+```java 
+public void onCreatePreferences(Bundle bundle, String s) {
+         /* Other preference setup code code */
+        //...
+        Preference preference = findPreference(getString(R.string.pref_size_key));
+        preference.setOnPreferenceChangeListener(this);
+}
+```
+### Should I create a settings
+![](https://d17h27t6h515a5.cloudfront.net/topher/2016/November/582a4eda_screen-shot-2016-11-14-at-3.55.51-pm/screen-shot-2016-11-14-at-3.55.51-pm.png)
 
 
