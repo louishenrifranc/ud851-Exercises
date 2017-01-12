@@ -308,7 +308,7 @@ database = wldbH.getWritableDatabase();
 ``` 
 _Note that getReadableDatabase return a read-only database object._
 * Query a database with the command
-```sqliteDatabase.query()```. Here is a tutorial on how to use this function ![tuto](http://stackoverflow.com/questions/10600670/sqlitedatabase-query-method).
+```sqliteDatabase.query()```. Here is the order of the arguments: location of the database/table name, filter of the columns, statement for how to filter rows, what to filter, sort order to return data)
 * Insert in a database by creating a ContentValues:
 ```java
 ContentValues contentValues = new ContentValues();
@@ -324,10 +324,74 @@ Every android developer should be aware of 4 key app components:
 * Services
 * Broadcast receivers
 * Content provider
-To have the access to read to a content provider, a permission must be added to the AndroidManifest:
+### Use Content provider from others
+1. To have the access to read to a content provider, a permission must be added to the AndroidManifest:
 ```
 <uses-permission android:name="com.example.udacity.application.TERMS_READ" />
 ```
 
-To get acess to a content provider, one must use ```ContentResolver```, which can perform four operations: update, query, insert, delete. To specify which contentProvider to get acess to, one must use an URI. An URI is of the form:
+2. To get acess to a content provider, one must create a ```ContentResolver``` from the ```getContentResolver```, which can perform four operations: update, query, insert, delete. To specify which contentProvider to get acess to, one must use an URI. An URI is of the form:
 ```ContentProviderPrefix://ContextAuthority/SpecificData```.
+3. Here are some methods to use a Cursor and extract information from it:
+* .getColumnIndex(COLUMN_NAME): return the index of the column
+* .moveToNext() : move the pointer of the cursor to the next row, and return false when there are no more rows.
+* .getString(Index): return the value at the cursor row pointer for the Index column 
+* .close(): always close a cursor at the end
+
+### Create a Content provider
+* Create a class MyContentProvider that inherited from ContentProvider 
+* Register the ContentProvider in the Manifest so as to be see by the system.
+```xml
+<provider
+	android:authorities="package.name"
+	android;name="package.name + class.name"
+	android:exported="true if every app can access the CP"
+/>
+```
+* MyContentProvider must override onCreate, delete, query... A URI is passed for query, delete, insert method, so the method inside must deal with different URI format. One way to deal with it is to use UriMatcher. A UriMatcher helps deals with different targeted path data. For example one may want to access a all table or only a single row refered by its ID (an Integer). So the URI must reflect this need. One example of an URI for this problem is contextauthority/tableName/#. '#' means that every integer could be pass, '*' means every sort of string.  
+When the UriMatcher is build, it takes an URI, and return a different code for every different type handle for the URI. Here is how you can build an UriMatcher:
+```java
+URIMatcher buildUriMatcher(){
+	// create a empty uriMatcher
+	UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+	// 1. AUTHORITIES is in ContentProvider class	
+	// 2. '/#': match every URI with an integer at the end
+	// 3. The code can be used as a switch in query/delete... functions where different treatment should be applied to different URI. See the example below
+uriMatcher.addURI(MyContentProvider.AUTHORITIES, table.path + "/#',ID_to_return); 
+}
+```
+
+Here is how you can use the UriMatcher in the insert function for example:
+```
+Uri insert(Uri uri, ContentValues values) {
+	final SQLiteDataBase db = mTaskDbHelper.getWritableDatabase();
+	int match = mUriMatcher.match(uri);
+	switch(match){ ...
+}
+
+# Background task
+### Services
+No networking activity should be done in an Activity because we can leave the activity. This is what Services is for. It is meant for running background tasks that don't need a visual component
+#### Loaders versus Services
+* If you're loading or processing data that will be used in the UI, use a loader
+* If the process is decoupled from the user interface, and exists even if there is no user interface, then a Service should be used. 
+### Starting services
+Services that are calling and started immediately.
+```java
+Intent intent = new Intent(this, MyIntentService.class);
+startService(intent);
+```
+MyIntentService must override ```onHandleIntent(Intent intent)```.
+Here is how one can implement a IntentService.
+```java
+public class MyIntentService extends IntentService {
+	public MyIntentService() {super("MyIntentService"); }
+	public void onHandleIntent(Intent intent) {
+		// get the action that we should executed (set with ... setAction() :)
+		String action = intent.getAction();
+		...		
+	}
+
+}
+* Every service should be defined in the Manifest.xml
+* Notes that every intent services are run in another thread than the main one, but there is only one background thread for every intent. Hence every intent of the app are put in a queue, and done in order of call.
