@@ -19,7 +19,7 @@ public boolean onCreateOptionsMenu(Menu menu) {
 public boolean onOptionsItemSelected(MenuItem item){
 	int id = item.getItemId();
 	if(id = R.id.action_refresh){
-# Create a new intent to open up the Settings Activity
+# Create a new intent to open up the Settings Activity 
 }...
 }
 ```
@@ -64,7 +64,7 @@ Toast.makeText(NameOfTheClass.context, message, TOAST.LENGTH_LONG).show()
         return new AdapterViewHolder(view);
     }
     ```
-	* OnBindViewHolder: OnBindViewHolder is called by the RecyclerView to display the data at the specified position.
+	* OnBindViewHolder: OnBindViewHolder is called by the RecyclerView to display one element of the List.
     ```java
     public void onBindViewHolder(AdapterViewHolder adapterViewHolder, int position) {
         String contentToDisplay = privateVariableData[position];
@@ -74,6 +74,18 @@ Toast.makeText(NameOfTheClass.context, message, TOAST.LENGTH_LONG).show()
 
 	* getItemCount: This method simply returns the number of items to display. The items data could be a ```String[]```, saved as a private variable in the Adapter class.
 * 7. Modify data to display by creating a set in the Adaptater class, and call notifyDatSetChanged() in it.
+
+##### Notes
+* The recyclerView offers something called a tag object, it's meant to store any data that doesn't need to be displayed. When calling ```onCreateViewHolder```, the tag can be set to any type of value like that: ```adapterViewHolder.itemView.setTag(objectToNotDisplay);```.
+* It is also possible to react when an element in the list is swipe right or left. Here is a simple code inside the onCreate of an Activity:
+```java
+new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+	// override when the item is moved	
+	public boolean onMove(...){}
+	// override when the item is swiped
+	public void onSwiped(...){}
+}
+```
 
 # Intents
 ### Definition
@@ -249,5 +261,61 @@ public void onCreatePreferences(Bundle bundle, String s) {
 ```
 ### Should I create a settings
 ![](https://d17h27t6h515a5.cloudfront.net/topher/2016/November/582a4eda_screen-shot-2016-11-14-at-3.55.51-pm/screen-shot-2016-11-14-at-3.55.51-pm.png)
+
+# SQLite
+### How to create a database
+* Create a class that will represent a Table in the database:
+```java
+public final class TableClass{
+	// constructor is private because it should not be used
+	private TableClass() {}
+
+	public static class TableClass implements BaseColumns{
+		public static final String TABLE_NAME = "";
+		public static final String COLUMN_NAME_WHATEVER = "whatever";
+		...
+	
+	}
+}
+```
+* Create the DataBase:
+```java
+public class DataBaseHelper extends SQLiteOpenHelper {
+	// name of the database
+	private static final String databaseName = "nameDB.db";
+	// version of the database
+	private static final int database_version = 1;
+
+	// constructor
+	public DataBaseHelper(Context context) {
+		// just call parent constructor		
+		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	}
+
+	// method that will actually create the database file
+	public onCreate(SQLiteDatabase sqliteDatabase) {
+		final String SQL_CREATE_DATABASE = "CREATE TABLE " + TableClass.TABLE_NAME + " (" + TableClass._ID + "INTEGER PRIMARY KEY AUTOINCREMENT," + TableClass.COLUMN_NAME_WHATEVER + "STRING NOT NULL" + ... + ");";
+```	sqliteDatabase.execSQL(SQL_CREATE_DATABASE);
+	}
+}
+```
+### Insert and retrieve from the Database in an Activity
+* Create a private parameter ```private SQLiteDatabase database;```, 
+* Get the database with the command:
+```java
+WaitlistDbHelper wldbH = new WaitlistDbHelper(this);
+database = wldbH.getWritableDatabase();
+``` 
+_Note that getReadableDatabase return a read-only database object._
+* Query a database with the command
+```sqliteDatabase.query()```. Here is a tutorial on how to use this function ![tuto](http://stackoverflow.com/questions/10600670/sqlitedatabase-query-method).
+* Insert in a database by creating a ContentValues:
+```java
+ContentValues contentValues = new ContentValues();
+contentValues.put(KEY_NAME, value);
+contentValues.put(KEY_NAME2, value2);
+database.insert(TABLE_NAME, null, contentValues);
+```
+* Remove from the database (see the documentation).
 
 

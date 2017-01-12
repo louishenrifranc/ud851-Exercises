@@ -19,8 +19,9 @@ public class GuestListAdapter extends RecyclerView.Adapter<GuestListAdapter.Gues
 
     /**
      * Constructor using the context and the db cursor
+     *
      * @param context the calling context/activity
-     * @param cursor the db cursor with waitlist data to display
+     * @param cursor  the db cursor with waitlist data to display
      */
     public GuestListAdapter(Context context, Cursor cursor) {
         this.mContext = context;
@@ -51,6 +52,16 @@ public class GuestListAdapter extends RecyclerView.Adapter<GuestListAdapter.Gues
         holder.partySizeTextView.setText(String.valueOf(partySize));
     }
 
+    public void swapCursor(Cursor newCursor) {
+        if (newCursor == null) {
+            return;
+        }
+
+        mCursor = newCursor;
+        if (mCursor != null) {
+            this.notifyDataSetChanged();
+        }
+    }
 
     @Override
     public int getItemCount() {
