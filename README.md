@@ -318,4 +318,16 @@ database.insert(TABLE_NAME, null, contentValues);
 ```
 * Remove from the database (see the documentation).
 
+# Content Provider
+Every android developer should be aware of 4 key app components: 
+* Activities
+* Services
+* Broadcast receivers
+* Content provider
+To have the access to read to a content provider, a permission must be added to the AndroidManifest:
+```
+<uses-permission android:name="com.example.udacity.application.TERMS_READ" />
+```
 
+To get acess to a content provider, one must use ```ContentResolver```, which can perform four operations: update, query, insert, delete. To specify which contentProvider to get acess to, one must use an URI. An URI is of the form:
+```ContentProviderPrefix://ContextAuthority/SpecificData```.
