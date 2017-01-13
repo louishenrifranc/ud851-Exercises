@@ -5,8 +5,8 @@
 * Create a LinearLayout and add object.
 * Get the object with the ```findViewbyId(R.id.name_defined_xml)```
 ### 2.2: Add a Menu (a button in the ActionBar)
-* Create a menu folder and a xml file in that folder which will represent the Menu item
-* Override ```onCreateOptionsMenu``` in the main Activity file. It will modify the ActionBar by adding the new button just created (create the Menu)
+* Create a menu folder (in the res folder) and in it, an xml file which will be used to represend a Menu item.
+* Override ```onCreateOptionsMenu``` in the main Activity file. It will modify the ActionBar by adding the new button just created.
 ```java
 public boolean onCreateOptionsMenu(Menu menu) {
  MenuInflater inflater = getMenuInflater();
@@ -14,12 +14,12 @@ public boolean onCreateOptionsMenu(Menu menu) {
  return True;
 }
 ```
-* Set the action to do when someone click on the Menu button created:
+* Set an action to execute when the Menu button is clicked:
 ```java
 public boolean onOptionsItemSelected(MenuItem item){
 	int id = item.getItemId();
 	if(id = R.id.action_refresh){
-# Create a new intent to open up the Settings Activity 
+// Create a new intent to open up the Settings Activity 
 }...
 }
 ```
