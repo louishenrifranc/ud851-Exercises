@@ -18,41 +18,40 @@ public boolean onCreateOptionsMenu(Menu menu) {
 ```java
 public boolean onOptionsItemSelected(MenuItem item){
 	int id = item.getItemId();
-	if(id = R.id.action_refresh){
-// Create a new intent to open up the Settings Activity 
-}...
+	// Create a new intent to open up the Settings Activity
+	if(id = R.id.action_refresh){}
 }
 ```
-* Create a Toast with the lines:
+* (Optionnal): A Toast message can be display with the command line:
 ```java
 Toast.makeText(NameOfTheClass.context, message, TOAST.LENGTH_LONG).show()
 ```
 
-
-### Build our URL
+### EditText
 * Get the text of EditText widget: ```widget.getText().toString()```
 
-## Connect to the Internet
-* adding permission in manifests inside the manifest outside of everything else: 
+### Connect to the Internet
+* Don't forget to add permission in the Manifest. 
 
 ### AsyncTask
 * Create a class which extended from AsynTask<URL, Void, String>. The three parameters are the type of the params send to the task, the type of the progress units published during the background computation, and the type of the result.
-* Override the doInBackground function
-* Override, (not forced), the onPostExecute, which is the function called at the end on the computation
-* Called the AsynTask inherited object background method with execute(params) and not doInBackground.
+* Override the ```doInBackground``` function
+* Override, (not forced), the ```onPostExecute```, which is the function called at the end on the computation. 
+* To launch the async task, used the method ```execute(params)``` instead of ```doInBackground(params)```.
 
 ### addPolish
-* Make a variable invisible in xml: ```android:visibility```, then in .java file it is possible to modify the visibility by calling setVisibility(View.INVISIBLE) on the Object.
-* Create a ProgressBar
+* Make a variable invisible in the UI using xml code: ```android:visibility```, then in .java file it is possible to modify the visibility by calling ```setVisibility(View.INVISIBLE)``` on the Object.
+* Create a ProgressBar...
 
 # Part 3. Recycler View
+RecyclerView is responsible to display a List of elements which are display and scrollable. It optimizes the recycling of element out of scope. Here are the main steps for creating a RecyclerView:
 * 1. Add dependencies in build.gradle ```compile 'com.android.support:recyclerview-v7:25.0.1'```
-* 2. Transform ScrollView by RecycleListView in the layout.xml file.
-* 3. Add a new layout in the layout folder which will represent an item in the list
-* 4. Create an AdapterViewHolder extending RecyclerView.ViewHolder. It will cache children's views for an item. 
-* 5. Create an Adapter class extending a RecyclerView.Adapter<AdapterViewHolder>.
+* 2. Transform ```ScrollView``` by ```RecycleListView``` in the layout.xml file (ScrollView is the old way to display a list).
+* 3. Add a new layout in the layout folder which will represent an item in the list.
+* 4. Create an ```AdapterViewHolder``` extending ```RecyclerView.ViewHolder```. It will cache children's views for an item. 
+* 5. Create an ```Adapter``` class extending a ```RecyclerView.Adapter<AdapterViewHolder>```.
 * 6. Override three functions:
-	* onCreateViewHolder: This gets called when each new ViewHolder is created:
+	* ```onCreateViewHolder```: This gets called when each new ViewHolder is created:
     ```java
     public AdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Context context = viewGroup.getContext();
@@ -64,7 +63,7 @@ Toast.makeText(NameOfTheClass.context, message, TOAST.LENGTH_LONG).show()
         return new AdapterViewHolder(view);
     }
     ```
-	* OnBindViewHolder: OnBindViewHolder is called by the RecyclerView to display one element of the List.
+	* ```OnBindViewHolder```: ```OnBindViewHolder``` is called by the ```RecyclerView``` to display one element of the List.
     ```java
     public void onBindViewHolder(AdapterViewHolder adapterViewHolder, int position) {
         String contentToDisplay = privateVariableData[position];
@@ -72,12 +71,13 @@ Toast.makeText(NameOfTheClass.context, message, TOAST.LENGTH_LONG).show()
     }
     ```
 
-	* getItemCount: This method simply returns the number of items to display. The items data could be a ```String[]```, saved as a private variable in the Adapter class.
-* 7. Modify data to display by creating a set in the Adaptater class, and call notifyDatSetChanged() in it.
+	* ```getItemCount```: This method simply returns the number of items to display (The items data could be a ```String[]```, saved as a private variable in the Adapter class).
+* 7. Modify data to display by creating a set in the Adaptater class, and call ```notifyDatSetChanged()``` in it.
 
 ##### Notes
-* The recyclerView offers something called a tag object, it's meant to store any data that doesn't need to be displayed. When calling ```onCreateViewHolder```, the tag can be set to any type of value like that: ```adapterViewHolder.itemView.setTag(objectToNotDisplay);```.
-* It is also possible to react when an element in the list is swipe right or left. Here is a simple code inside the onCreate of an Activity:
+* __Tag object__: The recyclerView offers something called a tag object, it's meant to store any data that doesn't need to be displayed. When calling ```onCreateViewHolder```, the tag can be set to any type of value like that: ```adapterViewHolder.itemView.setTag(objectToNotDisplay);```.
+
+* __Swiping__: It is also possible to react when an element in the list is swipe right or left. Here is a simple code inside the onCreate of an Activity:
 ```java
 new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 	// override when the item is moved	
@@ -89,17 +89,16 @@ new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT |
 
 # Intents
 ### Definition
-* Start an Activity from another Activity (in another app or not). It is done by passing messages called Intents.
+* Start an Activity from another Activity (in another app or not). It is done by passing messages called Intents. Note that further in the tutorial, Intent are also used to start Services, ContentProvider.
 ### Create an Intent
-* To pass to another Activity, you have to create a new intent:
+* To pass to another Activity, you have to create a new ```Intent```:
 ```java
 Intent intent = new Intent(contextFirstActivity, contextNewActivity)
 // A context object is a reference to the activity class (this or .class)
 startActivity(intent);
 ```
 ### Pass and receive data
-* To also pass data, use the method ```i.putExtra("CODE_FOR_RETRIEVAL", dataVariable)```
-
+* To pass data, the method ```intent.putExtra("CODE_FOR_RETRIEVAL", dataVariable)``` can be used. The code is actually is used to retrieve the data later, as seen just next.
 * To receive the data in the new Activity:
 ```java
 Bundle extras = getIntent().getExtras();
@@ -117,7 +116,7 @@ onActivityResult("CODE_FOR_RETRIEVAL", intResultCode, intent);
 
 ### Common intent 
 * A common intent does not specify the app component to start, but instead specifies an action. Here is the example of how to start a browser. To check if an any app can resolve the activity, for example launch a browser, you can call the method ```intent.resolveActivity(getPacketManager())```. 
-* When creating a new Activity it is possible to order them in the AndroidManifest.xml, so that a default Return button to go back from the previous Activity can be set. Here is the definition of a Child Activity:
+* When creating a new Activity it is possible to order them in the AndroidManifest.xml, so that the default Return button go back to the previous Activity. Here is the definition of a Child Activity:
 ```xml
 <activity
             android:name=".DetailActivity"
@@ -128,7 +127,7 @@ onActivityResult("CODE_FOR_RETRIEVAL", intResultCode, intent);
 </activity>
 ```
 
-and the parent activity
+, and its parent Activity:
 ```xml
 <activity
 	android:name=".MainActivity"
@@ -140,40 +139,43 @@ and the parent activity
         </intent-filter>
 </activity>
 ```
-```launchMode``` tells whether the MainActivity should be recreated when getting back to the MainActivity or only restore.
+##### Notes
+* ```launchMode``` tells whether the MainActivity should be recreated when getting back to the MainActivity or only restore.
+
 # Life cycle
 ### Logging message to the terminal
-* To log something, you can use the method
+* To log something, you can use the method: 
 ```java
 // TAG can be Activity.class.getSimpleName()
 Log.d(TAG, "string to print");
 ```
+Other method exists depending the importance of the log (see the documentation).
 
 ### Lifecycle callback
 ![Activity Lifecyle](https://developer.android.com/guide/components/images/activity_lifecycle.png)
 
-When the app started, stoped, or is even put in background, some functions fire and you can override them:
+When the app started, stoped, or is even put in background, some functions fire and it's easy to override them:
 * onCreate() : always implement this callback. It is called when the system create this Activity
 * onStart()
 
 ### Save Activity state
-Activity state can be destroyed for multiple reasons (pressing back button, calling finish()). If an Activity is destroyed and recreated, all the layout/view are saved using the Bundle instante (Bundle is a mapping from String keys to various Parcelable values, Parcelable is an interface to write and read back class). But menbers variable of the Activity are destroyed so there is a way to saved them:
+Activity state can be destroyed for multiple reasons (pressing back button, calling finish()). If an Activity is destroyed and recreated, all the layout/view are saved using the Bundle instante (Bundle is a mapping from String keys to various Parcelable values, Parcelable is an interface to write and read back class). But __members variable of the Activity are destroyed__ so there must be a way to saved them:
 ```java
-
 public void onSaveInstanceState(Bundle savedInstanceState) {
 	super.onSaveInstanceState(savedInstanceState);
 	savedInstanceState.putInt("CODE_FOR_RETRIEVAL", variableToSave);
 }
 ```
 
-Each variable can be restore in the ```onCreate()``` method using the Bundle.
+Then, each variable can be restore in the ```onCreate()``` method using the Bundle.
 
 ### Use AsyncTaskLoader instead of AsyncTask
-It makes AsyncTask non dependant of the Activity life. Because it becomes a Loader, it will lives even if the Activity is destroyed. For example if you launch a network research, and the orientation of the screen is changed, then the thread handler is reset but the thread keep running.
-One particular subclass of Loaders is of interest: the AsyncTaskLoader. This class performs the same function as the AsyncTask, but a bit better. It can handle Activity configuration changes more easily, and it behaves within the life cycles of Fragments and Activities. The nice thing is that the AsyncTaskLoader can be used in any situation that the AsyncTask is being used
+It makes ```AsyncTask``` non dependant of the Activity life. Because it becomes a Loader, __it will lives even if the Activity is destroyed__. For example if you launch a network research, and the orientation of the screen is changed, then the thread handler is reset but the thread keep running.
+One particular subclass of Loaders is interesting: the ```AsyncTaskLoader```. This class needs us to override the same function as the AsyncTask, but is implemented a little bit better. It can handle Activity configuration changes more easily, and it behaves within the life cycles of Fragments and Activities. The nice thing is that the ```AsyncTaskLoader``` can be used in any situation where the AsyncTask is being used.
 
 # Preferences
 ### Data Persistence
+__How and what data should be saved, where?__
 * Bundle to save key-value pairs. Data is gone if app is shutdown, it is a temporary saved place
 * SharedPreference: save key-value pairs in a File. Save forever until the app is uninstall or phone is crashed.	It is used to save small information about the user/app state such as string/numerical values.
 * SQLite
@@ -181,10 +183,10 @@ One particular subclass of Loaders is of interest: the AsyncTaskLoader. This cla
 * Save in the cloud (Google Firebase)
 
 ### Create a Settings Activity and add it a PreferenceFragment
-* A PreferenceFragment is an object to display properly a settings parameter.
+* A ```PreferenceFragment``` is an object to display properly a settings parameter.
 * Create a Menu item (saw before).
 * Create a new class in the java folder called SettingsFragment inherited from ```PreferenceFragmentCompat```.
-* Create an _xml_ folder, and an xml file in it. It creates by default a PreferenceScreen in the xml. You can add CheckBoxPreference, ListPreference... Here is an example:
+* Create an _xml_ folder, and an xml file in it. It creates by default a PreferenceScreen in the xml. You can add ```CheckBoxPreference```, ```ListPreference```... Here is an example:
 ```xml
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
@@ -197,7 +199,7 @@ One particular subclass of Loaders is of interest: the AsyncTaskLoader. This cla
 </PreferenceScreen>
 ```
 * Back in the SettingsFragment file, use the method ```addPreferencesFromRessource(R.xml.id_xml_file);
-* Modify the settings activity if not done to display the new PreferenceScreen.
+* Modify the settings activity xml file, if not done, to display the new PreferenceScreen.
 ```xml
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_settings"
@@ -209,21 +211,22 @@ One particular subclass of Loaders is of interest: the AsyncTaskLoader. This cla
 ```<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>```.
 ### Access the parameter value from the main activity
 #### Easy way
-In a method called by onCreate(), add the following code:
+In a method called by ```onCreate()```, add the following code:
 ```java
 SharedPreferences sharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
-# to get an object use the method get + type of the object
-# Note that getString is used to access a string key from the string file
+// to get an object use the method get + type of the object
+// Note that getString is used to access a string key from the string file
 variable = sharedPreferences.getBoolean(getString(R.string.pref_parameter_key), getString(R.string.pref_parameter_value));
 // pref_parameter_value are the default values
 ```
-The problem with this method is to call the method in the onCreate method, that is only called when the app launches, rotates...
-#### A better way
-1. Make the the MainActivity implementing ```SharedPreferences.OnSharedPreferenceChangeListener```, override onSharedPreferenceChanged, with something like the code below:
+The problem with this method is that the method is in the ```onCreate``` method, that is only called when the app launches, rotates...
+
+#### A better way 
+1. Make the the MainActivity implementing ```SharedPreferences.OnSharedPreferenceChangeListener```, overrided ```onSharedPreferenceChanged```, with something like the code below:
 ```java
-public void onSharedPrefernceChanged(SharedPreferences sharedPreferences, String key){
+public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key){
 	if(key.equals(getString(R.string.pref_parameter_key)){
-	// Then as up, 
+	// ...
 	}
 }
 ```
@@ -249,8 +252,9 @@ An example:
         >
     </EditTextPreference>
 ```
-For TextPreference, the user can enter everything. Hence one should restrict and control what the user has inputed and act consequently.
-To do so, you'll have to make the SettingsActivity inherited from ```Preference.OnPreferenceChangeListener```. Instead of ```OnSharedPreferenceChangeListener```, it is triggered BEFORE any avlue is saved in the SharedPreference file. The method to override is ```onPreferenceChange```. The listener should be attach to the  preference in onCreatePreferences:
+##### Notes
+* __TextPreference check input__ :For TextPreference, the user can enter everything. Hence one should restrict and control what the user has inputed and act consequently.
+To do so, you'll have to make the SettingsActivity inherited from ```Preference.OnPreferenceChangeListener```. Instead of ```OnSharedPreferenceChangeListener```, it is triggered BEFORE any value is saved in the SharedPreference file. The method to override is ```onPreferenceChange```. The listener should be attach to the  preference in onCreatePreferences:
 ```java 
 public void onCreatePreferences(Bundle bundle, String s) {
          /* Other preference setup code code */
