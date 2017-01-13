@@ -268,7 +268,7 @@ public void onCreatePreferences(Bundle bundle, String s) {
 
 # SQLite
 ### How to create a database
-* Create a class that will represent a Table in the database:
+* Create a class that will represent a Table and its entries in a database:
 ```java
 public final class TableClass{
 	// constructor is private because it should not be used
